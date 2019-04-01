@@ -10,17 +10,17 @@ node {
     }
 
     stage('clean') {
-        sh "chmod +x gradlew"
-        sh "./gradlew clean --no-daemon"
+        sh "cd store && chmod +x gradlew"
+        sh "cd store && ./gradlew clean --no-daemon"
     }
 
     stage('npm install') {
-        sh "./gradlew npm_install -PnodeInstall --no-daemon"
+        sh "cd store && ./gradlew npm_install -PnodeInstall --no-daemon"
     }
 
     stage('backend tests') {
         try {
-            sh "./gradlew test -PnodeInstall --no-daemon"
+            sh "cd store && ./gradlew test -PnodeInstall --no-daemon"
         } catch(err) {
             throw err
         } finally {
@@ -30,7 +30,7 @@ node {
 
     stage('frontend tests') {
         try {
-            sh "./gradlew npm_run_test-ci -PnodeInstall --no-daemon"
+            sh "cd store && ./gradlew npm_run_test-ci -PnodeInstall --no-daemon"
         } catch(err) {
             throw err
         } finally {
@@ -39,16 +39,16 @@ node {
     }
 
     stage('packaging') {
-        sh "./gradlew bootWar -x test -Pprod -PnodeInstall --no-daemon"
+        sh "cd store && ./gradlew bootWar -x test -Pprod -PnodeInstall --no-daemon"
         archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
     }
 
 
     def dockerImage
     stage('build docker') {
-        sh "cp -R src/main/docker build/"
-        sh "cp build/libs/*.war build/docker/"
-        dockerImage = docker.build('docker-login/store', 'build/docker')
+        sh "cp -R store/src/main/docker store/build/"
+        sh "cp store/build/libs/*.war store/build/docker/"
+        dockerImage = docker.build('docker-login/store', 'store/build/docker')
     }
 
     stage('publish docker') {
