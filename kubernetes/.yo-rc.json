@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "deploymentType": "kubernetes",
+    "gatewayType": "zuul",
+    "monitoring": "no",
+    "directoryPath": "../",
+    "appsFolders": [
+      "store",
+      "invoice",
+      "notification"
+    ],
+    "clusteredDbApps": [],
+    "consoleOptions": [],
+    "serviceDiscoveryType": "eureka",
+    "dockerRepositoryName": "deepu105",
+    "dockerPushCommand": "docker push",
+    "kubernetesNamespace": "xl-demo",
+    "kubernetesServiceType": "LoadBalancer",
+    "ingressDomain": "",
+    "istio": "no",
+    "istioRoute": false,
+    "jwtSecretKey": "YTg5ZjY5Zjc5NDIwMzRiYjJkZDViNjYyODc0YTIxNjQ1MTM0NzZkZDQxMzJjNjZhNjBhODcwZjUzMTNkNDI4ZmRlNGQ1NTVmZjQ3Nzk5ZmQwZDIwMWU3MjgzY2FkNWRmNTYwMQ=="
+  }
+}

@@ -1,0 +1,28 @@
+# Provision GCP GKE cluster
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+- name: e-commerce-ms
+  type: core.Directory
+  children:
+  - name: gcp-terraform
+    type: overthere.LocalHost
+    os: UNIX
+    children:
+    - name: terraform-client
+      type: terraform.TerraformClient
+      path: '/usr/local/bin' # for local installation
+      workingDirectory: '/tmp/e-commerce-ms' # for local installation
+
+---
+apiVersion: xl-deploy/v1
+kind: Environments
+spec:
+- name: e-commerce-ms
+  type: core.Directory
+  children:
+  - name: gcp-terraform
+    type: udm.Environment
+    members:
+    - Infrastructure/e-commerce-ms/gcp-terraform
+    - Infrastructure/e-commerce-ms/gcp-terraform/terraform-client

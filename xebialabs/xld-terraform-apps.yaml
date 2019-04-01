@@ -1,0 +1,61 @@
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: e-commerce-ms
+  type: core.Directory
+  children:
+
+# Provision GKE cluster using Terraform templates
+  - name: GKE-TERRAFORM
+    type: core.Directory
+    children:
+    - name: e-commerce-ms-terraform-gke
+      type: udm.Application
+      children:
+      - name: '1.0.0'
+        type: udm.DeploymentPackage
+        deployables:
+        - name: e-commerce-ms-gke
+          type: terraform.Module
+          file: !file ../terraform
+          inputVariables:
+            project_id: deepu-playground
+            name: e-commerce-ms
+            region: europe-west1
+            gke_master_user: admin
+            gke_master_pass: !value K8SMasterPassword
+          boundTemplates:
+          - "../gcp-gke-deepu-playground"
+          - "../gcp-gke-deepu-playground-env"
+
+        templates:
+        # creates the required XLD infrastructure entries
+        - name: gcp-gke-deepu-playground
+          type: template.k8s.Master
+          username: admin
+          password: !value K8SMasterPassword
+          apiServerURL: 'https://{{%outputVariables.endpoint%}}'
+          skipTLS: true
+          instanceName: e-commerce-ms/gcp-gke-deepu-playground
+        # creates a new environment for Kubernetes deployments
+        - name: gcp-gke-deepu-playground-env
+          type: template.udm.Environment
+          members:
+          - "../gcp-gke-deepu-playground"
+          instanceName: e-commerce-ms/gcp-gke-deepu-playground
+
+
+  - name: K8S
+    type: core.Directory
+
+# Provision K8s namespace
+    children:
+    - name: e-commerce-ms-namespace
+      type: udm.Application
+      children:
+      - name: '1.0.0'
+        type: udm.DeploymentPackage
+        deployables:
+        - name: xl-demo
+          type: k8s.NamespaceSpec
+          namespaceName: 'xl-demo'
