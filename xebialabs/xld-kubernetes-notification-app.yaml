@@ -1,0 +1,36 @@
+apiVersion: xl-deploy/v1
+kind: Applications
+spec:
+- name: dks-eks-ms
+  type: core.Directory
+  children:
+    - name: K8S
+      type: core.Directory
+      children:
+      - name: dks-eks-ms-notification-mongodb
+        type: udm.Application
+        children:
+        - name: !value BUILD_ID
+          type: udm.DeploymentPackage
+          deployables:
+          - name: dks-eks-ms-notification-mongodb
+            type: k8s.ResourcesFile
+            file: !file ../notification/build/kubernetes/notification-mongodb.yml
+            tags: 
+            - xl-demo
+      - name: dks-eks-ms-notification
+        type: udm.Application
+        children:
+        - name: !value BUILD_ID
+          type: udm.DeploymentPackage
+          deployables:
+          - name: dks-eks-ms-invoice-notification
+            type: k8s.ResourcesFile
+            file: !file ../notification/build/kubernetes/notification-deployment.yml
+            tags: 
+            - xl-demo
+          - name: dks-eks-ms-notification-svc
+            type: k8s.ResourcesFile
+            file: !file ../notification/build/kubernetes/notification-service.yml
+            tags: 
+            - xl-demo

@@ -1,0 +1,27 @@
+# Provision AWS EKS cluster
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+- name: dks-eks-ms
+  type: core.Directory
+  children:
+  - name: aws-dks-eks-ms
+    type: aws.Cloud
+    accesskey: !value AWSAccessKey
+    accessSecret: !value AWSAccessSecret
+    children:
+    - name: eks-cloudformation
+      type: aws.cloudformation.Stack
+      region: eu-west-3
+---
+apiVersion: xl-deploy/v1
+kind: Environments
+spec:
+- name: dks-eks-ms
+  type: core.Directory
+  children:
+  - name: aws-cloudformation-dks-eks-ms
+    type: udm.Environment
+    members:
+    - Infrastructure/dks-eks-ms/aws-dks-eks-ms
+    - Infrastructure/dks-eks-ms/aws-dks-eks-ms/eks-cloudformation

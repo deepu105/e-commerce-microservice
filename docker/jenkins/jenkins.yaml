@@ -1,0 +1,81 @@
+jenkins:
+  systemMessage: "Jenkins configured as code"
+  numExecutors: 3
+
+jobs:
+  - script: >
+      pipelineJob('devops-as-code-eks-blueprint-store-svc') {
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          branch("master")
+                          remote {
+                            credentials('github-credentials')
+                            url('https://github.com/${GITHUB_USER}/e-commerce-microservice.git')
+                          }
+                      }
+                  }
+                  scriptPath('store/Jenkinsfile')
+              }
+          }
+      }
+  - script: >
+      pipelineJob('devops-as-code-eks-blueprint-notification-svc') {
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          branch("master")
+                          remote {
+                        	credentials('github-credentials')
+                        	url('https://github.com/${GITHUB_USER}/e-commerce-microservice.git')
+                          }
+                      }
+                  }
+                  scriptPath('notification/Jenkinsfile')
+              }
+          }
+      }
+  - script: >
+      pipelineJob('devops-as-code-eks-blueprint-invoice-svc') {
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          branch("master")
+                          remote {
+                          credentials('github-credentials')
+                          url('https://github.com/${GITHUB_USER}/e-commerce-microservice.git')
+                          }
+                      }
+                  }
+                  scriptPath('invoice/Jenkinsfile')
+              }
+          }
+      }
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - usernamePassword:
+            scope:    GLOBAL
+            id:       github-credentials
+            username: ${GITHUB_USER}
+            password: ${GITHUB_TOKEN}
+        - usernamePassword:
+            scope:    GLOBAL
+            id:       xld-credentials
+            username: admin
+            password: admin
+        - usernamePassword:
+            scope:    GLOBAL
+            id:       xlr-credentials
+            username: admin
+            password: admin
+        - usernamePassword:
+            scope:    GLOBAL
+            id:       docker-login
+            username: ${DOCKER_USER}
+            password: ${DOCKER_PASS}
