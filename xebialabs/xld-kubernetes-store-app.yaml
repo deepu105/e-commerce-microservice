@@ -1,51 +1,51 @@
 apiVersion: xl-deploy/v1
 kind: Applications
 spec:
-- name: dks-eks-ms
+- name: dks-eksm-ms
   type: core.Directory
   children:
     - name: K8S
       type: core.Directory
       children:
-      - name: dks-eks-ms-store-mysql
+      - name: dks-eksm-ms-store-mysql
         type: udm.Application
         children:
         - name: !value BUILD_ID
           type: udm.DeploymentPackage
           deployables:
-          - name: dks-eks-ms-store-mysql
+          - name: dks-eksm-ms-store-mysql
             type: k8s.ResourcesFile
             file: !file ../store/build/kubernetes/store-mysql.yml
             tags: 
             - xl-demo
-      - name: dks-eks-ms-registry
+      - name: dks-eksm-ms-registry
         type: udm.Application
         children:
         - name: !value BUILD_ID
           type: udm.DeploymentPackage
           deployables:
-          - name: dks-eks-ms-application-config
+          - name: dks-eksm-ms-application-config
             type: k8s.ResourcesFile
             file: !file ../registry/kubernetes/application-configmap.yml
             tags: 
             - xl-demo
-          - name: dks-eks-ms-jhipster-registry
+          - name: dks-eksm-ms-jhipster-registry
             type: k8s.ResourcesFile
             file: !file ../registry/kubernetes/jhipster-registry.yml
             tags: 
             - xl-demo
-      - name: dks-eks-ms-store
+      - name: dks-eksm-ms-store
         type: udm.Application
         children:
         - name: !value BUILD_ID
           type: udm.DeploymentPackage
           deployables:
-          - name: dks-eks-ms-store-deployment
+          - name: dks-eksm-ms-store-deployment
             type: k8s.ResourcesFile
             file: !file ../store/build/kubernetes/store-deployment.yml
             tags: 
             - xl-demo
-          - name: dks-eks-ms-store-svc
+          - name: dks-eksm-ms-store-svc
             type: k8s.ResourcesFile
             file: !file ../store/build/kubernetes/store-service.yml
             tags: 

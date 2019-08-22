@@ -1,35 +1,35 @@
 apiVersion: xl-deploy/v1
 kind: Applications
 spec:
-- name: dks-eks-ms
+- name: dks-eksm-ms
   type: core.Directory
   children:
     - name: K8S
       type: core.Directory
       children:
-      - name: dks-eks-ms-invoice-mysql
+      - name: dks-eksm-ms-invoice-mysql
         type: udm.Application
         children:
         - name: !value BUILD_ID
           type: udm.DeploymentPackage
           deployables:
-          - name: dks-eks-ms-invoice-mysql
+          - name: dks-eksm-ms-invoice-mysql
             type: k8s.ResourcesFile
             file: !file ../invoice/build/kubernetes/invoice-mysql.yml
             tags: 
             - xl-demo
-      - name: dks-eks-ms-invoice
+      - name: dks-eksm-ms-invoice
         type: udm.Application
         children:
         - name: !value BUILD_ID
           type: udm.DeploymentPackage
           deployables:
-          - name: dks-eks-ms-invoice-deployment
+          - name: dks-eksm-ms-invoice-deployment
             type: k8s.ResourcesFile
             file: !file ../invoice/build/kubernetes/invoice-deployment.yml
             tags: 
             - xl-demo
-          - name: dks-eks-ms-invoice-svc
+          - name: dks-eksm-ms-invoice-svc
             type: k8s.ResourcesFile
             file: !file ../invoice/build/kubernetes/invoice-service.yml
             tags: 

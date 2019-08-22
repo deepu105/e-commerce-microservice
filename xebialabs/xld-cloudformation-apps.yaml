@@ -1,7 +1,7 @@
 apiVersion: xl-deploy/v1
 kind: Applications
 spec:
-- name: dks-eks-ms
+- name: dks-eksm-ms
   type: core.Directory
   children:
 
@@ -9,24 +9,24 @@ spec:
     type: core.Directory
     children:
     # create S3 bucket
-    - name: dks-eks-ms-lambda-bucket
+    - name: dks-eksm-ms-lambda-bucket
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: s3-bucket-dks-eks-ms-lambda
+        - name: s3-bucket-dks-eksm-ms-lambda
           type: aws.s3.BucketSpec
-          bucketName: dks-eks-ms-lambda
-          region: eu-west-3
+          bucketName: dks-eksm-ms-lambda
+          region: eu-west-2
     # upload the artifacts to S3 bucket
-    - name: dks-eks-ms-lambda-artifacts
+    - name: dks-eksm-ms-lambda-artifacts
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-lambda-artifacts
+        - name: dks-eksm-ms-lambda-artifacts
           type: aws.s3.File
           file: !file ../cloudformation/cfn-secret-provider.zip
           acl: bucket-owner-full-control
@@ -35,83 +35,83 @@ spec:
   - name: EKS-CLOUDFORMATION
     type: core.Directory
     children:
-    - name: dks-eks-ms-cloudformation-eks-user
+    - name: dks-eksm-ms-cloudformation-eks-user
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-eks-user
+        - name: dks-eksm-ms-eks-user
           type: aws.cloudformation.Template
           file: !file ../cloudformation/eks-user.yaml
           capabilities:
           - CAPABILITY_IAM
           - CAPABILITY_NAMED_IAM
           inputVariables:
-            ProjectName: dks-eks-ms
-            UserStackName: dks-eks-ms-eks-user
-            S3BucketPrefix: dks-eks-ms-lambda
-    - name: dks-eks-ms-cloudformation-eks-vpc
+            ProjectName: dks-eksm-ms
+            UserStackName: dks-eksm-ms-eks-user
+            S3BucketPrefix: dks-eksm-ms-lambda
+    - name: dks-eksm-ms-cloudformation-eks-vpc
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-eks-vpc
+        - name: dks-eksm-ms-eks-vpc
           type: aws.cloudformation.Template
           file: !file ../cloudformation/eks-vpc.yaml
           capabilities:
           - CAPABILITY_IAM
           - CAPABILITY_NAMED_IAM
           inputVariables:
-            ProjectName: dks-eks-ms
-            VPCStackName: dks-eks-ms-eks-vpc
-            AvailabilityZones: eu-west-3a, eu-west-3b
-    - name: dks-eks-ms-cloudformation-eks-master
+            ProjectName: dks-eksm-ms
+            VPCStackName: dks-eksm-ms-eks-vpc
+            AvailabilityZones: eu-west-2a, eu-west-2b
+    - name: dks-eksm-ms-cloudformation-eks-master
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-eks-master
+        - name: dks-eksm-ms-eks-master
           type: aws.cloudformation.Template
           file: !file ../cloudformation/eks-master.yaml
           capabilities:
           - CAPABILITY_IAM
           - CAPABILITY_NAMED_IAM
+          environmentPath: aws-eks-dks-eksm-ms
           inputVariables:
-            ProjectName: dks-eks-ms
-            VPCStackName: dks-eks-ms-eks-vpc
-    - name: dks-eks-ms-cloudformation-eks-workers
+            ProjectName: dks-eksm-ms
+            VPCStackName: dks-eksm-ms-eks-vpc
+    - name: dks-eksm-ms-cloudformation-eks-workers
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-eks-workers
+        - name: dks-eksm-ms-eks-workers
           type: aws.cloudformation.Template
           file: !file ../cloudformation/eks-workers.yaml
           capabilities:
           - CAPABILITY_IAM
           - CAPABILITY_NAMED_IAM
-          environmentPath: aws-eks-dks-eks-ms
           inputVariables:
-            ProjectName: dks-eks-ms
-            VPCStackName: dks-eks-ms-eks-vpc
-            UserStackName: dks-eks-ms-eks-user
-            ClusterStackName: dks-eks-ms-eks-master
-            ClusterName: dks-eks-ms-master
-            NodeGroupName: dks-eks-ms
+            ProjectName: dks-eksm-ms
+            VPCStackName: dks-eksm-ms-eks-vpc
+            UserStackName: dks-eksm-ms-eks-user
+            ClusterStackName: dks-eksm-ms-eks-master
+            ClusterName: dks-eksm-ms-master
+            NodeGroupName: dks-eksm-ms
         
             
     # config map used to create custom user for authentication to the EKS cluster
-    - name: dks-eks-ms-k8s-configmap
+    - name: dks-eksm-ms-k8s-configmap
       type: udm.Application
       children:
       - name: '1.0.0'
         type: udm.DeploymentPackage
         deployables:
-        - name: dks-eks-ms-aws-auth
+        - name: dks-eksm-ms-aws-auth
           type: k8s.ResourcesFile
           file: !file ../kubernetes/aws-auth-cm.yaml
           delimiters: "## ##"
@@ -121,7 +121,7 @@ spec:
 
     children:
     # Provision K8s namespace
-    - name: dks-eks-ms-namespace
+    - name: dks-eksm-ms-namespace
       type: udm.Application
       children:
       - name: '1.0.0'

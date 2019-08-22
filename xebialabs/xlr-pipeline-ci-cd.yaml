@@ -1,17 +1,17 @@
 apiVersion: xl-release/v1
 kind: Templates
 spec:
-- name: dks-eks-ms
+- name: dks-eksm-ms
   type: xlrelease.Folder
   children:
-  - name: dks-eks-ms-ci-cd
+  - name: dks-eksm-ms-ci-cd
     type: xlrelease.Release
     description: |
       This XL Release template shows how to deploy an application, based on microservices architecture, to AWS EKS using XL Deploy.
     tags:
     - AWS
     - EKS
-    - dks-eks-ms
+    - dks-eksm-ms
     scriptUsername: !value XL_RELEASE_USERNAME
     scriptUserPassword: !value XL_RELEASE_PASSWORD
     variables:
@@ -64,79 +64,79 @@ spec:
         - name: Create S3 bucket for lambda artifacts
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-LAMBDA/dks-eks-ms-lambda-bucket/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-LAMBDA/dks-eksm-ms-lambda-bucket/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
         - name: Upload lambda artifacts to S3
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-LAMBDA/dks-eks-ms-lambda-artifacts/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-LAMBDA/dks-eksm-ms-lambda-artifacts/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
       - name: Provision AWS VPC and IAM resources
         type: xlrelease.ParallelGroup
         tasks:
         - name: Provision AWS IAM resources
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-CLOUDFORMATION/dks-eks-ms-cloudformation-eks-user/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-CLOUDFORMATION/dks-eksm-ms-cloudformation-eks-user/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
         - name: Provision AWS VPC
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-CLOUDFORMATION/dks-eks-ms-cloudformation-eks-vpc/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-CLOUDFORMATION/dks-eksm-ms-cloudformation-eks-vpc/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
       - name: Provision AWS EKS cluster
         type: xlrelease.SequentialGroup
         tasks:
         - name: Provision EKS master node
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-CLOUDFORMATION/dks-eks-ms-cloudformation-eks-master/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-CLOUDFORMATION/dks-eksm-ms-cloudformation-eks-master/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
         - name: Provision EKS workers nodes
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-CLOUDFORMATION/dks-eks-ms-cloudformation-eks-workers/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/EKS-CLOUDFORMATION/dks-eksm-ms-cloudformation-eks-workers/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms
         - name: Update workers dictionary for kube-system environment
           type: xld.UpdateCIProperty
           server: XL Deploy
-          ciID: Environments/dks-eks-ms/dks-eks-ms-master-EKSCluster-kube-system
+          ciID: Environments/dks-eksm-ms/dks-eksm-ms-master-EKSCluster-kube-system
           ciProperty: dictionaries
-          propertyValue: '[ "Environments/dks-eks-ms/dks-eks-ms-eks-workers-dictionary" ]'
+          propertyValue: '[ "Environments/dks-eksm-ms/dks-eksm-ms-eks-workers-dictionary" ]'
         - name: Provision EKS config map for workers
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/EKS-CLOUDFORMATION/dks-eks-ms-k8s-configmap/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/dks-eks-ms-master-EKSCluster-kube-system
+          deploymentPackage: dks-eksm-ms/EKS-CLOUDFORMATION/dks-eksm-ms-k8s-configmap/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/dks-eksm-ms-master-EKSCluster-kube-system
     
-    - name: Build dks-eks-ms application
+    - name: Build dks-eksm-ms application
       type: xlrelease.Phase
       tasks:
-      - name: Build docker images for dks-eks-ms services
+      - name: Build docker images for dks-eksm-ms services
         type: xlrelease.ParallelGroup
         tasks:
-        - name: Build dks-eks-ms store docker image
+        - name: Build dks-eksm-ms store docker image
           type: jenkins.Build
           jenkinsServer: jenkins
           jobName: devops-as-code-eks-blueprint-store-svc
           owner: admin
           variableMapping:
             pythonScript.buildNumber: ${storeBuildNumber}
-        - name: Build dks-eks-ms notification docker image
+        - name: Build dks-eksm-ms notification docker image
           type: jenkins.Build
           jenkinsServer: jenkins
           jobName: devops-as-code-eks-blueprint-notification-svc
           owner: admin
           variableMapping:
             pythonScript.buildNumber: ${notificationBuildNumber}
-        - name: Build dks-eks-ms invoice docker image
+        - name: Build dks-eksm-ms invoice docker image
           type: jenkins.Build
           jenkinsServer: jenkins
           jobName: devops-as-code-eks-blueprint-invoice-svc
           owner: admin
           variableMapping:
             pythonScript.buildNumber: ${invoiceBuildNumber}
-    - name: Deploy dks-eks-ms application
+    - name: Deploy dks-eksm-ms application
       type: xlrelease.Phase
       tasks:
       
@@ -146,12 +146,12 @@ spec:
         - name: Deploy namespace
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-namespace/1.0.0
-          deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-namespace/1.0.0
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
         - name: Tag namespace
           type: xld.UpdateCIProperty
           server: XL Deploy
-          ciID: Infrastructure/dks-eks-ms/gke-dks-eks-ms-cluster-GKECluster/xl-demo
+          ciID: Infrastructure/dks-eksm-ms/dks-eksm-ms-master-EKSCluster/xl-demo
           ciProperty: tags
           propertyValue: '[ "xl-demo" ]'
       
@@ -161,44 +161,44 @@ spec:
         - name: Deploy invoice mysql svc
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-invoice-mysql/1.0.${invoiceBuildNumber}
-          deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-invoice-mysql/1.0.${invoiceBuildNumber}
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
         - name: Deploy store mysql svc
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-store-mysql/1.0.${storeBuildNumber}
-          deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-store-mysql/1.0.${storeBuildNumber}
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
         - name: Deploy notification mongodb svc
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-notification-mongodb/1.0.${notificationBuildNumber}
-          deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-notification-mongodb/1.0.${notificationBuildNumber}
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
       - name: Deploy stateless services
         type: xlrelease.SequentialGroup
         tasks:
         - name: Deploy registry svc
           type: xldeploy.Deploy
           server: XL Deploy
-          deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-registry/1.0.${storeBuildNumber}
-          deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+          deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-registry/1.0.${storeBuildNumber}
+          deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
         - name: Deploy microservices
           type: xlrelease.ParallelGroup
           tasks:
           - name: Deploy invoice svc
             type: xldeploy.Deploy
             server: XL Deploy
-            deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-invoice/1.0.${invoiceBuildNumber}
-            deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+            deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-invoice/1.0.${invoiceBuildNumber}
+            deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
           - name: Deploy notification svc
             type: xldeploy.Deploy
             server: XL Deploy
-            deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-notification/1.0.${notificationBuildNumber}
-            deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+            deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-notification/1.0.${notificationBuildNumber}
+            deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
           - name: Deploy store svc
             type: xldeploy.Deploy
             server: XL Deploy
-            deploymentPackage: dks-eks-ms/K8S/dks-eks-ms-store/1.0.${storeBuildNumber}
-            deploymentEnvironment: Environments/dks-eks-ms/aws-eks-dks-eks-ms
+            deploymentPackage: dks-eksm-ms/K8S/dks-eksm-ms-store/1.0.${storeBuildNumber}
+            deploymentEnvironment: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms
     - name: Test
       type: xlrelease.Phase
       tasks:
@@ -211,7 +211,7 @@ spec:
           numberOfContinueRetrials: 100
           pollingInterval: 10
           
-          ciId: Infrastructure/dks-eks-ms/eks-cluster
+          ciId: Infrastructure/dks-eksm-ms/dks-eksm-ms-master-EKSCluster
           
           taskName: describeService
           variableMapping:
@@ -236,7 +236,7 @@ spec:
                 if "None" not in item:
                     releaseVariables['lbHostnameOrIp'] = item
           # end of script
-      - name: Check dks-eks-ms application status
+      - name: Check dks-eksm-ms application status
         type: xlrelease.ScriptTask
         script: |
           import urllib2
@@ -269,7 +269,7 @@ spec:
         type: xlrelease.GateTask
         team: Release Admin
         description: |
-          The dks-eks-ms app is now live on EKS!
+          The dks-eksm-ms app is now live on EKS!
           Check out the web site and complete this task when done.
 
           URL => http://${lbHostnameOrIp}:8080

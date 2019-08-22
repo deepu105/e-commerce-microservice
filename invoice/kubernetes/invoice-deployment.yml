@@ -34,7 +34,7 @@ spec:
                 done
       containers:
       - name: invoice-app
-        image: <your-dockerhub-user>/ecommerce-invoice:@IMAGE_TAG@
+        image: deepu105/ecommerce-invoice:@IMAGE_TAG@
         imagePullPolicy: Always
         env:
         - name: SPRING_PROFILES_ACTIVE

@@ -1,17 +1,17 @@
 apiVersion: xl-release/v1
 kind: Templates
 spec:
-- name: dks-eks-ms
+- name: dks-eksm-ms
   type: xlrelease.Folder
   children:
-  - name: dks-eks-ms-destroy
+  - name: dks-eksm-ms-destroy
     type: xlrelease.Release
     description: |
       This XL Release template shows how to undeploy an application, based on microservices architecture, to AWS EKS using XL Deploy.
     tags:
     - AWS
     - EKS
-    - dks-eks-ms
+    - dks-eksm-ms
     scriptUsername: !value XL_RELEASE_USERNAME
     scriptUserPassword: !value XL_RELEASE_PASSWORD
     phases:
@@ -24,40 +24,40 @@ spec:
         - name: Undeploy registry svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-registry
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-registry
         - name: Undeploy invoice svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-invoice
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-invoice
         - name: Undeploy notification svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-notification
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-notification
         - name: Undeploy store svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-store
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-store
       - name: Undeploy stateful services
         type: xlrelease.ParallelGroup
         tasks:
         - name: Undeploy invoice mysql svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-invoice-mysql
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-invoice-mysql
         - name: Undeploy store mysql svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-store-mysql
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-store-mysql
         - name: Undeploy notification mongodb svc
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-notification-mongodb
+          deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-notification-mongodb
       
       # Un-provision namespace
       - name: Undeploy xl-demo namespace
         type: xldeploy.Undeploy
         server: XL Deploy
-        deployedApplication: Environments/dks-eks-ms/aws-eks-dks-eks-ms/dks-eks-ms-namespace
+        deployedApplication: Environments/dks-eksm-ms/aws-eks-dks-eksm-ms/dks-eksm-ms-namespace
       
     
     # De-provision Infra
@@ -71,40 +71,40 @@ spec:
         - name: Deprovision EKS config map for workers
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/dks-eks-ms-master-EKSCluster-kube-system/dks-eks-ms-k8s-configmap
+          deployedApplication: Environments/dks-eksm-ms/dks-eksm-ms-master-EKSCluster-kube-system/dks-eksm-ms-k8s-configmap
         - name: Update workers dictionary for kube-system environment
           type: xld.UpdateCIProperty
           server: XL Deploy
-          ciID: Environments/dks-eks-ms/dks-eks-ms-master-EKSCluster-kube-system
+          ciID: Environments/dks-eksm-ms/dks-eksm-ms-master-EKSCluster-kube-system
           ciProperty: dictionaries
           propertyValue: '[]'
         - name: Deprovision EKS workers nodes
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-cloudformation-eks-workers
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-cloudformation-eks-workers
         - name: Deprovision EKS master node
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-cloudformation-eks-master
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-cloudformation-eks-master
       - name: Delete artifacts from S3
         type: xlrelease.SequentialGroup
         tasks:
         - name: Delete artifacts from S3
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-lambda-artifacts
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-lambda-artifacts
         - name: Delete S3 bucket
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-lambda-bucket
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-lambda-bucket
       - name: Deprovision AWS VPC and IAM resources
         type: xlrelease.SequentialGroup
         tasks:
         - name: Deprovision AWS IAM resources
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-cloudformation-eks-user
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-cloudformation-eks-user
         - name: Deprovision AWS VPC
           type: xldeploy.Undeploy
           server: XL Deploy
-          deployedApplication: Environments/dks-eks-ms/aws-cloudformation-dks-eks-ms/dks-eks-ms-cloudformation-eks-vpc
+          deployedApplication: Environments/dks-eksm-ms/aws-cloudformation-dks-eksm-ms/dks-eksm-ms-cloudformation-eks-vpc

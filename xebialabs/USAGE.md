@@ -22,7 +22,7 @@ Please note that you can obtain a trial license or bring your own license for XL
         export DOCKER_USER=<your Docker user name>
         export DOCKER_PASS=<your Docker password>
         ```
-        2. Replace the occurrences of `<your-dockerhub-user>` in the kubernetes `*-deployment.yml` files with your own DockerHub ID
+        2. Replace the occurrences of `deepu105` in the kubernetes `*-deployment.yml` files with your own DockerHub ID
         3. Push the cloned repository to your GitHub account so that Jenkins can checkout `https://github.com/${GITHUB_USER}/e-commerce-microservice.git`
     4. Run `docker-compose up` on the generated `docker` folder.
 
@@ -34,7 +34,7 @@ To deploy this blueprint with the XebiaLabs DevOps Platform, follow the steps be
     xl apply -f xebialabs.yaml
     ```
 
-2. Go to XL Release, look for the "dks-eks-ms-ci-cd" template, and start a new release from it.
+2. Go to XL Release, look for the "dks-eksm-ms-ci-cd" template, and start a new release from it.
 
 ## Minimum required versions
 

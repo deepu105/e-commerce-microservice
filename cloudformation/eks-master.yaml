@@ -45,7 +45,7 @@ Resources:
     Type: "AWS::EKS::Cluster"
     Properties:
       Name: !Sub "${ProjectName}-master"
-      Version: "1.10"
+      Version: "1.11"
       RoleArn: !GetAtt ClusterRole.Arn
       ResourcesVpcConfig:
         SecurityGroupIds:
